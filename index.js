@@ -20,10 +20,12 @@ function getImage() {
 
 	let seed = (Math.random() + 1).toString(36).substring(5);
 	let image = "https://picsum.photos/seed/" + seed + "/" + width + "/" + height + ".webp?" + tick;
-	let image2 = "https://picsum.photos/seed/" + seed + "/" + (width * 2) + "/" + (height * 2) + ".webp?" + tick;
 
-	$("#img").attr("srcset", image + " 1x, " + image2 + " 2x");
 	$("#img").attr("src", image);
+
+    let image2 = "https://picsum.photos/seed/" + seed + "/" + (width * 2) + "/" + (height * 2) + ".webp?" + tick;
+	$("#img").attr("srcset", image + " 1x, " + image2 + " 2x");
+
 	$("#img").attr("width", width);
 	$("#img").attr("height", height);
 
