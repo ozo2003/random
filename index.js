@@ -15,6 +15,8 @@ function randomImage() {
 function getImage() {
     let image = "https://picsum.photos/" + viewportWidth() + "/" + viewportHeight() + ".webp?" + tick;
     $("#img").attr("src", image);
+    $("#img").attr("width", viewportWidth());
+    $("#img").attr("height", viewportHeight());
     tick += 1;
 }
 
