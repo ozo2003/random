@@ -13,10 +13,17 @@ function randomImage() {
 }
 
 function getImage() {
-    let image = "https://picsum.photos/" + viewportWidth() + "/" + viewportHeight() + ".webp?" + tick;
+    let width = viewportWidth();
+    let height = viewportHeight();
+
+    document.querySelector('meta[name=viewport]').setAttribute('content', 'width='+width+',height='+height+',initial-scale=1');
+
+    let image = "https://picsum.photos/" + width + "/" + height + ".webp?" + tick;
+
     $("#img").attr("src", image);
-    $("#img").attr("width", viewportWidth());
-    $("#img").attr("height", viewportHeight());
+    $("#img").attr("width", width);
+    $("#img").attr("height", height);
+
     tick += 1;
 }
 
