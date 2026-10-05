@@ -2,6 +2,7 @@ const timeout = (new URLSearchParams(window.location.search).get("timeout") || 6
 
 let tick = 1;
 let latestTick = 0;
+let useCloudflareImages = window.location.protocol === "https:";
 
 document.addEventListener("DOMContentLoaded", function () {
     setInterval(getImage, timeout);
@@ -17,13 +18,15 @@ function getImage() {
 
     const seed = (Math.random() + 1).toString(36).substring(5);
     const cacheKey = tick;
-    const image1x = "https://picsum.photos/seed/" + seed + "/" + width + "/" + height + ".webp?" + cacheKey;
+    const sourceImage1x = picsumImage(seed, width, height);
+    const image1x = transformImage(sourceImage1x, width, height);
 
     let imgElement = document.getElementById("img");
     imgElement.width = width;
     imgElement.height = height;
 
-    const image2x = "https://picsum.photos/seed/" + seed + "/" + (width * 2) + "/" + (height * 2) + ".webp?" + cacheKey;
+    const sourceImage2x = picsumImage(seed, width * 2, height * 2);
+    const image2x = transformImage(sourceImage2x, width * 2, height * 2);
     const nextImage = new Image(width, height);
 
     latestTick = cacheKey;
@@ -34,10 +37,27 @@ function getImage() {
         imgElement.removeAttribute("srcset");
         imgElement.src = nextImage.currentSrc || image1x;
     };
+    nextImage.onerror = function () {
+        if (cacheKey !== latestTick || !useCloudflareImages) return;
+
+        useCloudflareImages = false;
+        nextImage.srcset = sourceImage1x + " 1x, " + sourceImage2x + " 2x";
+        nextImage.src = sourceImage1x;
+    };
     nextImage.srcset = image1x + " 1x, " + image2x + " 2x";
     nextImage.src = image1x;
 
     tick += 1;
+}
+
+function picsumImage(seed, width, height) {
+    return "https://picsum.photos/seed/" + seed + "/" + width + "/" + height + ".webp";
+}
+
+function transformImage(source, width, height) {
+    if (!useCloudflareImages) return source;
+
+    return window.location.origin + "/cdn-cgi/image/format=auto,width=" + width + ",height=" + height + ",fit=cover,quality=80/" + source;
 }
 
 function viewportWidth() {
