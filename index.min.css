@@ -1,1 +1,1 @@
-body,html{background:#111;height:100%;overflow:hidden}#img{display:block;height:100%;object-fit:cover;width:100%}
+body,html{background:#111;height:100%;overflow:hidden}#img{display:block;height:100%;object-fit:cover;width:100%}#img:not([src]){visibility:hidden}

@@ -11,3 +11,7 @@ html {
     object-fit: cover;
     width: 100%;
 }
+
+#img:not([src]) {
+    visibility: hidden;
+}
