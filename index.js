@@ -1,11 +1,13 @@
 const timeout = (new URLSearchParams(window.location.search).get("timeout") || 60) * 1000;
 
 let tick = 1;
+let latestTick = 0;
 
 document.addEventListener("DOMContentLoaded", function () {
-    getImage();
     setInterval(getImage, timeout);
 });
+
+getImage();
 
 function getImage() {
     const width = viewportWidth();
@@ -14,16 +16,26 @@ function getImage() {
     document.querySelector('meta[name=viewport]').setAttribute("content", "width=" + width + ",height=" + height + ",initial-scale=1");
 
     const seed = (Math.random() + 1).toString(36).substring(5);
-    const image1x = "https://picsum.photos/seed/" + seed + "/" + width + "/" + height + ".webp?" + tick;
+    const cacheKey = tick;
+    const image1x = "https://picsum.photos/seed/" + seed + "/" + width + "/" + height + ".webp?" + cacheKey;
 
     let imgElement = document.getElementById("img");
-    imgElement.src = image1x;
-
-    const image2x = "https://picsum.photos/seed/" + seed + "/" + (width * 2) + "/" + (height * 2) + ".webp?" + tick;
-    imgElement.srcset = image1x + " 1x, " + image2x + " 2x";
-
     imgElement.width = width;
     imgElement.height = height;
+
+    const image2x = "https://picsum.photos/seed/" + seed + "/" + (width * 2) + "/" + (height * 2) + ".webp?" + cacheKey;
+    const nextImage = new Image(width, height);
+
+    latestTick = cacheKey;
+    nextImage.decoding = "async";
+    nextImage.onload = function () {
+        if (cacheKey !== latestTick) return;
+
+        imgElement.removeAttribute("srcset");
+        imgElement.src = nextImage.currentSrc || image1x;
+    };
+    nextImage.srcset = image1x + " 1x, " + image2x + " 2x";
+    nextImage.src = image1x;
 
     tick += 1;
 }

@@ -1,15 +1,13 @@
 body,
 html {
+    background: #111;
     height: 100%;
     overflow: hidden;
 }
 
 #img {
-    /* Full height */
+    display: block;
     height: 100%;
-
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+    object-fit: cover;
+    width: 100%;
 }
